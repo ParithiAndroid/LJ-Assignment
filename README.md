@@ -44,20 +44,29 @@ You can watch the screen record of the app here:
 
 ## Architecture
 
-The app follows **MVVM (Model-View-ViewModel)** architecture with **Hilt** for dependency injection, **Room** for caching, and **Retrofit** for network operations.
+The app follows **MVVM (Model-View-ViewModel)** architecture with:
 
+- **Hilt** for dependency injection  
+- **Room** for caching  
+- **Retrofit + OkHttp** for network operations  
+
+### Flow Diagram
+
+```text
 [ UI Layer (Jetpack Compose) ]
-|
-v
+              |
+              v
 [ ViewModel (RepoViewModel) ]
-|
-v
+              |
+              v
 [ Repository (ReposRepository) ]
-|
-v
+              |
+              v
 [ Data Sources ]
-├─ Remote API (Retrofit + OkHttp)
-└─ Local Database (Room)
+    ├─ Remote API (Retrofit + OkHttp)
+    └─ Local Database (Room)
+
+```
 
 ### Layer Responsibilities
 
