@@ -7,7 +7,7 @@ val BluePrimary = Color(0xFF1565C0)   // Deep Blue
 val TealSecondary = Color(0xFF00897B) // Teal
 val OrangeTertiary = Color(0xFFFF7043) // Orange Accent
 val LightBackground = Color(0xFFFDFDFD)
-val LightSurface = Color(0xFFFFFFFF)
+val LightSurface = Color(0xFF66E2FF)
 val LightOnPrimary = Color.White
 val LightOnBackground = Color(0xFF1C1B1F)
 
