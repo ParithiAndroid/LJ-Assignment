@@ -37,9 +37,9 @@ You can watch the screen record of the app here:
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/light.jpg" alt="Light Mode" width="300"/>
+  <img src="screenshots/light.jpg" alt="Light Mode" width="100" height="200"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="screenshots/dark.jpg" alt="Dark Mode" width="300"/>
+  <img src="screenshots/dark.jpg" alt="Dark Mode" width="100" height="200"/>
 </p>
 
 ---
