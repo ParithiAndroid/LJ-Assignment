@@ -11,6 +11,11 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+/**
+ * Light and Dark color schemes for the app.
+ * Used by LJAssignmentTheme to style the app dynamically.
+ */
+
 private val DarkColorScheme = darkColorScheme(
     primary = BluePrimaryDark,
     secondary = TealSecondaryDark,
@@ -30,6 +35,14 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = LightOnPrimary,
     onBackground = LightOnBackground
 )
+
+/**
+ * Custom MaterialTheme for the app.
+ * Applies light or dark color scheme based on parameter.
+ *
+ * @param darkTheme Boolean indicating if dark theme is active.
+ * @param content Composable content to apply the theme to.
+ */
 
 @Composable
 fun LJAssignmentTheme(

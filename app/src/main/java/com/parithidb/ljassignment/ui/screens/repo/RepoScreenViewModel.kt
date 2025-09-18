@@ -16,12 +16,17 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for repository list screen.
+ * Handles fetching, caching, search, and error events.
+ */
+
 @HiltViewModel
 class RepoViewModel @Inject constructor(
     private val repository: ReposRepository
 ) : ViewModel() {
 
-    // UI state sealed class
+    // Sealed class representing UI state
     sealed class UiState {
         object Loading : UiState()
         data class Success(val repos: List<RepoEntity>) : UiState()
@@ -54,6 +59,11 @@ class RepoViewModel @Inject constructor(
         refreshRepos()
     }
 
+    /**
+     * Refresh repository list from API.
+     * Shows snackbar on failure, retains local data if available.
+     */
+
     fun refreshRepos() {
         viewModelScope.launch {
             val localRepos = repository.getRepos().first() // get snapshot
@@ -73,11 +83,18 @@ class RepoViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Update the search query for filtering the list.
+     */
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
 
-    // Filter repos based on query
+    /**
+     * Filter repositories based on search query.
+     */
+
     fun filteredRepos(allRepos: List<RepoEntity>): List<RepoEntity> {
         val query = _searchQuery.value.lowercase()
         return if (query.isBlank()) {

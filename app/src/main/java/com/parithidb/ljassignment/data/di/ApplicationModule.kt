@@ -10,14 +10,27 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Hilt module to provide application-wide singleton dependencies.
+ */
+
 @Module
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
+
+    /**
+     * Provides the application context.
+     */
+
     @Provides
     @Singleton
     fun provideApplicationContext(@ApplicationContext context: Context): Context {
         return context
     }
+
+    /**
+     * Provides GitHub API service using Retrofit client.
+     */
 
     @Provides
     @Singleton

@@ -10,20 +10,39 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
+/**
+ * Repository responsible for fetching GitHub repositories.
+ * Handles caching in Room database and refreshing data from API.
+ */
+
 class ReposRepository @Inject constructor(
     private val database: AppDatabase,
     private val api: GithubRepoApiService
 ) {
     private val repoDao = database.repoDao()
 
+    /**
+     * Returns a Flow of repositories from the local database.
+     * This ensures the UI updates automatically when data changes.
+     */
+
     fun getRepos(): Flow<List<RepoEntity>> = repoDao.getAllRepos()
+
+    /**
+     * Fetch repositories from GitHub API and update local database.
+     *
+     * @return [Result] indicating success or failure
+     */
 
     suspend fun refreshRepos(): Result<Unit> {
         return try {
+            // Fetch data from network
             val response = api.searchRepos()
 
+            // Map API model to local database entity
             val entities = response.items.map { it.toEntity() }
 
+            // Wrap database operations in a transaction
             database.withTransaction {
                 repoDao.clearAll()
                 repoDao.insertAllRepos(entities)

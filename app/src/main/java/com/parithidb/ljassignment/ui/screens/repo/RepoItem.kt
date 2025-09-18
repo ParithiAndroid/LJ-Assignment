@@ -32,6 +32,13 @@ import androidx.compose.ui.unit.dp
 import com.parithidb.ljassignment.data.database.entities.RepoEntity
 import com.parithidb.ljassignment.util.LoadImage
 
+/**
+ * Composable that displays a single repository item in a card.
+ *
+ * @param repo The repository entity containing details like name, owner, id, and image URL.
+ * @param onClick Callback invoked when the card is clicked, passing repo URL and name.
+ */
+
 @Composable
 fun RepoItem(
     repo: RepoEntity,
@@ -69,7 +76,7 @@ fun RepoItem(
                     text = repo.repoName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis // Truncate long names
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -85,7 +92,7 @@ fun RepoItem(
                 )
             }
 
-            // Arrow icon to indicate click
+            // Small arrow to indicate clickability
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "Go",

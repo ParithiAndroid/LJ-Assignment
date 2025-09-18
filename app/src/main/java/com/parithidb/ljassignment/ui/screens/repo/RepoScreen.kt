@@ -4,12 +4,14 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -71,24 +73,33 @@ import com.parithidb.ljassignment.ui.screens.web.WebActivity
 import kotlinx.coroutines.launch
 import kotlin.jvm.java
 
+/**
+ * Main screen displaying the list of repositories.
+ * Handles search, refresh, error states, and theme toggle.
+ *
+ * @param viewModel RepoViewModel instance injected via Hilt.
+ * @param onToggleTheme Lambda to switch dark/light theme.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepoScreen(
     viewModel: RepoViewModel = hiltViewModel(),
     onToggleTheme: () -> Unit = {}
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState() // Observe UI state
     val searchQuery by viewModel.searchQuery.collectAsState()
-    var searchMode by remember { mutableStateOf(false) }
+    var searchMode by remember { mutableStateOf(false) } // Toggle search bar
 
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState() // Scroll state for LazyColumn
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() } // For showing error
     val coroutineScope = rememberCoroutineScope()
 
+    // Collect error events from ViewModel and show snackbar
     LaunchedEffect(Unit) {
         viewModel.errorEvents.collect { message ->
             coroutineScope.launch {
@@ -98,14 +109,14 @@ fun RepoScreen(
     }
 
 
-
-// Watch scroll state to clear focus
+    // Clear keyboard focus when scrolling
     LaunchedEffect(listState.isScrollInProgress) {
         if (listState.isScrollInProgress) {
             focusManager.clearFocus()
         }
     }
 
+    // Show/hide keyboard when entering search mode
     LaunchedEffect(searchMode) {
         if (searchMode) {
             focusRequester.requestFocus()
@@ -115,7 +126,7 @@ fun RepoScreen(
         }
     }
 
-
+    // Handle back press while in search mode
     BackHandler(enabled = searchMode) {
         searchMode = false
         viewModel.updateSearchQuery("")
@@ -129,6 +140,7 @@ fun RepoScreen(
                     AnimatedContent(
                         targetState = searchMode,
                         transitionSpec = {
+                            // Smooth slide + fade animation for search toggle
                             if (targetState) {
                                 slideInHorizontally(
                                     initialOffsetX = { fullWidth -> fullWidth },
@@ -152,6 +164,7 @@ fun RepoScreen(
                         label = "TopBarSlideAnim"
                     ) { isSearching ->
                         if (isSearching) {
+                            // Search TextField UI
                             Box(
                                 modifier = Modifier.fillMaxHeight(),
                                 contentAlignment = Alignment.CenterStart
@@ -165,7 +178,8 @@ fun RepoScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp) // keeps it centered
-                                        .focusRequester(focusRequester),
+                                        .focusRequester(focusRequester)
+                                        .animateContentSize(),  // smooth expansion
                                     shape = RoundedCornerShape(16.dp),
                                     leadingIcon = {
                                         Icon(
@@ -188,7 +202,10 @@ fun RepoScreen(
                                 )
                             }
                         } else {
-                            Text("Swift Repos")
+                            Text(
+                                "Swift Repos",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                         }
                     }
                 },
@@ -253,7 +270,7 @@ fun RepoScreen(
                 is RepoViewModel.UiState.Loading -> {
                     // keep centered only for loader
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator() //Centered Loader
                     }
                 }
 
@@ -264,19 +281,36 @@ fun RepoScreen(
                         viewModel.filteredRepos(repos)
                     }
 
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        items(filteredRepos) { repo ->
-                            val context = LocalContext.current
-                            RepoItem(repo) { url, repoName ->
-                                context.startActivity(
-                                    Intent(context, WebActivity::class.java).apply {
-                                        putExtra(WebActivity.EXTRA_URL, url)
-                                        putExtra(WebActivity.REPO_NAME, repoName)
+                    if (filteredRepos.isEmpty()) {
+                        // Show "No matching record" if search filter has no results
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No matching record",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(8.dp),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            items(filteredRepos) { repo ->
+                                val context = LocalContext.current
+                                RepoItem(
+                                    repo = repo,
+                                    onClick = { url, name ->
+                                        context.startActivity(
+                                            Intent(context, WebActivity::class.java).apply {
+                                                putExtra(WebActivity.EXTRA_URL, url)
+                                                putExtra(WebActivity.REPO_NAME, name)
+                                            }
+                                        )
                                     }
                                 )
                             }
@@ -284,12 +318,13 @@ fun RepoScreen(
                     }
                 }
 
+
                 is RepoViewModel.UiState.Empty -> {
                     Box(
                         Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No repos available")
+                        Text("No repos available") // Empty state
                     }
                 }
 

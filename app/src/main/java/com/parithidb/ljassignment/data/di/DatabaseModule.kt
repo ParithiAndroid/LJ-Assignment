@@ -10,9 +10,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Hilt module to provide Room database as a singleton.
+ */
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    /**
+     * Provides AppDatabase singleton instance.
+     */
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
@@ -21,7 +30,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "github_repo_database"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration()  // Fallback to destructive migration for simplicity
             .addMigrations()
             .build()
     }

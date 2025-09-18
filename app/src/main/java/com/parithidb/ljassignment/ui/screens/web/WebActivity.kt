@@ -27,16 +27,20 @@ import com.parithidb.ljassignment.ui.screens.theme.ThemeViewModel
 import com.parithidb.ljassignment.ui.theme.LJAssignmentTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Activity to display repository details in a WebView.
+ * Supports theme toggle via ThemeViewModel.
+ */
+
 @AndroidEntryPoint
 class WebActivity : ComponentActivity() {
 
     companion object {
-        const val EXTRA_URL = "extra_url"
-        const val REPO_NAME = "repo_name"
+        const val EXTRA_URL = "extra_url"  // URL to load in WebView
+        const val REPO_NAME = "repo_name"  // Repository name for AppBar
     }
 
-    private val themeViewModel: ThemeViewModel by viewModels()
-
+    private val themeViewModel: ThemeViewModel by viewModels() // Inject ThemeViewModel
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +67,7 @@ class WebActivity : ComponentActivity() {
                     }
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
+                        // Embed native Android WebView inside Compose
                         AndroidView(
                             factory = { context ->
                                 WebView(context).apply {
@@ -70,9 +75,9 @@ class WebActivity : ComponentActivity() {
                                         ViewGroup.LayoutParams.MATCH_PARENT,
                                         ViewGroup.LayoutParams.MATCH_PARENT
                                     )
-                                    webViewClient = WebViewClient()
+                                    webViewClient = WebViewClient()  // handle links internally
                                     settings.javaScriptEnabled = true
-                                    loadUrl(url)
+                                    loadUrl(url) // Load repository URL
                                 }
                             },
                             modifier = Modifier.fillMaxSize()
