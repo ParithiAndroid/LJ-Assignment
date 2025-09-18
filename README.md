@@ -36,9 +36,11 @@ You can watch the screen record of the app here:
 
 ## Screenshots
 
-| Light Mode | Dark Mode |
-|------------|-----------|
-| ![light](screenshots/light.jpg) | ![dark](screenshots/dark.jpg) |
+<p align="center">
+  <img src="screenshots/light.jpg" alt="Light Mode" width="300"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="screenshots/dark.jpg" alt="Dark Mode" width="300"/>
+</p>
 
 ---
 
