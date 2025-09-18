@@ -20,7 +20,7 @@ A modern Android application that fetches, caches, and displays trending Swift r
 
 | Light Mode | Dark Mode |
 |------------|-----------|
-| ![light](screenshots/light.png) | ![dark](screenshots/dark.png) |
+| ![light](screenshots/light.jpg) | ![dark](screenshots/dark.jpg) |
 
 ---
 
